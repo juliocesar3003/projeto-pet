@@ -1,9 +1,7 @@
-package com.example.demo.entidades;
+package com.projeto.api.entidades;
 
 import java.io.Serializable;
 import java.util.UUID;
-
-import com.example.demo.entidades.porteEnum.TipoPorte;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,29 +12,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Entity
-@Table(name ="tb_animais")
+@Table(name = "tb_servicos")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-
-public class Animais implements Serializable{
-private static final long serialVersionUID = 1L;
+public class TipoServicos implements Serializable{
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	private String tipoAnimal;
-	
-	private String nome;
-	
-	private String raca;
-	
-	private TipoPorte porte;
-	
-	private String observacao;
-	
-	
+	private String servico;
+	private Integer valor;
 }

@@ -1,8 +1,8 @@
-package com.example.demo.repository;
+package com.projeto.api.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.example.demo.entidades.Agendamentos;
+import com.projeto.api.entidades.Agendamentos;
 
 public interface AngendamentosRepository extends JpaRepository<Agendamentos, Long>{
 

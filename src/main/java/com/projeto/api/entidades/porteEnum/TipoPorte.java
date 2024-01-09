@@ -1,4 +1,4 @@
-package com.example.demo.entidades.porteEnum;
+package com.projeto.api.entidades.porteEnum;
 
 public enum TipoPorte {
 

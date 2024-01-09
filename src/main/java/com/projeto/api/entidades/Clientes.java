@@ -1,4 +1,4 @@
-package com.example.demo.entidades;
+package com.projeto.api.entidades;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -10,11 +10,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name ="tb_clientes")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Clientes implements Serializable {
@@ -22,13 +25,16 @@ private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	
+	 private Long id;
 
-	private String nome;
+	 private String nome;
 	
-	private Integer celular;
+	 private Integer celular;
 	
-	private String endereco;
+	 private String endereco;
+
+
 	
 
 }
