@@ -21,6 +21,8 @@ public class ClientesService {
 	@Autowired
 	private ClienteRepository repository;
 	
+	
+	
 	public List<Clientes> findAll(){
 		return repository.findAll();
 	}
@@ -28,6 +30,7 @@ public class ClientesService {
 	public Clientes findByid(Long id) {
 		Optional<Clientes> obj = repository.findById(id);
 		return obj.orElseThrow(() -> new ResourceNotFoundException(id));
+		
 	}
 	
 	public Clientes insert( Clientes obj) {
