@@ -1,9 +1,11 @@
-package com.example.demo;
+package com.example.api;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+import com.projeto.api.PetApplication;
+
+@SpringBootTest(classes = PetApplication.class)
 class PetApplicationTests {
 
 	@Test

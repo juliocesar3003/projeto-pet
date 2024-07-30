@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 public class AgendamentosDTO {
 
 	private Long idAnimal;
-	private Double valorTotal;
 	private LocalDateTime data;
 	
 	private List<InforServicosDto> servicos;

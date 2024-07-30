@@ -8,6 +8,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import com.projeto.api.entidades.Agendamentos;
 import com.projeto.api.entidades.TipoServicos;
 import com.projeto.api.repository.TipoServicoRepository;
 import com.projeto.api.service.exceptions.DataBaseException;
@@ -57,11 +58,8 @@ public class TipoServicoService {
 		throw new ResourceNotFoundException(id);
 	}
 	}
-	public TipoServicos inserirAgendamento( TipoServicos obj) {
-	
-			TipoServicos obj1 = new TipoServicos();
-			UpdateData(obj,obj1);
-			return repository.save(obj1);
+	public void inserirAgendamento(TipoServicos obj) {
+		repository.save(obj);
 		}
 	
 	
@@ -71,8 +69,5 @@ public class TipoServicoService {
 		obj1.setValor(obj.getValor());
 		
 	}
-	private void inserirAgendamento(TipoServicos obj, TipoServicos obj1) {
-		obj1.setAgendamento(obj.getAgendamento());
-		
-	}
+	
 }

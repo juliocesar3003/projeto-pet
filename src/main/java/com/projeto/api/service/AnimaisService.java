@@ -28,6 +28,9 @@ public class AnimaisService {
 	public List<Animais> findAll(){
 		return repository.findAll();
 	}
+	public List<Animais> findbyNome(String nome){
+		return repository.findByNome(nome);
+	}
 	
 	public Animais findById(Long id) {
 		Optional<Animais> animal = repository.findById(id);

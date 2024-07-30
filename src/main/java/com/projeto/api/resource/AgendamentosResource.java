@@ -39,7 +39,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@CrossOrigin(origins = "http://127.0.0.1:5500" )
+@CrossOrigin(origins = "http://127.0.0.1:5500")
 @RestController
 @RequestMapping(value = "/agendamentos")
 public class AgendamentosResource {
@@ -48,11 +48,15 @@ public class AgendamentosResource {
 	private AgendamentosService service;
 
 	
-	
+	@GetMapping
+	public List<ExibirAgendamentoDTO> findAll(){
+	List <ExibirAgendamentoDTO> lista = service.findAll();
+	return lista;
+	}
 	
 	@GetMapping(value = "/{id}")
-	public Agendamentos findByIdWithServicos(@PathVariable Long id){
-		Agendamentos obj = service.findByIdWithServicos(id);
+	public ExibirAgendamentoDTO findById(@PathVariable Long id){
+		ExibirAgendamentoDTO obj = service.findById(id);
 	   
 		return obj;
 	}

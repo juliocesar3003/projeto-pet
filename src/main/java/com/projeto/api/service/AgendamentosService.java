@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.projeto.api.entidades.Agendamentos;
@@ -46,28 +47,29 @@ public class AgendamentosService {
 	@Autowired
 	private TipoServicoService ServicoService;
 	
-	@PersistenceContext
-    private EntityManager entityManager;
 
-    public Agendamentos findByIdWithServicos(Long id) {
-        return entityManager.createQuery(
-                "SELECT DISTINCT a FROM Agendamentos a " +
-                "LEFT JOIN FETCH a.servicos " +
-                "WHERE a.id = :id", Agendamentos.class)
-                .setParameter("id", id)
-                .getSingleResult();
-    }
 
-	
-	public List<Agendamentos> findAll(){
-		return repository.findAll();
+  
+
+	@Transactional(readOnly = true)
+	public List<ExibirAgendamentoDTO> findAll(){
+		List<Agendamentos> lista =  repository.findAll();
+		return converterListaDeAgendamentos(lista);
 	}
 	
-	public Agendamentos findByid(Long id) {
-		Optional<Agendamentos> obj = repository.findById(id);
-		return obj.get();
-		
-	}
+
+	private List<ExibirAgendamentoDTO> converterListaDeAgendamentos(List<Agendamentos> lista) {
+		List<ExibirAgendamentoDTO> listaDto = new ArrayList<>();
+		for(Agendamentos i : lista) {
+		ExibirAgendamentoDTO obj =converterobj(i);
+		listaDto.add(obj);
+		}
+		return listaDto ;
+		}
+
+
+	
+	@Transactional(readOnly = true)
 	public ExibirAgendamentoDTO findById(Long id) {
 	    Optional<Agendamentos> objOptional = repository.findById(id);
 	    Agendamentos obj = objOptional.orElseThrow(() -> new ResourceNotFoundException(id));
@@ -102,29 +104,39 @@ public class AgendamentosService {
 				
 	}
 
+	@Transactional
 	public Agendamentos insert(AgendamentosDTO obj){
 		Agendamentos agendamento = new Agendamentos();
 		Animais objAnimal =  animaisService.findById(obj.getIdAnimal());
 		agendamento.setDate(obj.getData());
 		agendamento.setAnimal(objAnimal);
 		agendamento.setCliente(objAnimal.getCliente());
-		List<TipoServicos> lista = addservico(obj.getServicos());
+		List<TipoServicos> lista = addservico(obj.getServicos(), agendamento);
 	    agendamento.getServicos().addAll(lista);
 		repository.save(agendamento);
 		return agendamento;
+		
 		}
 	 
+		
 	
 
-
-	private List<TipoServicos> addservico( List<InforServicosDto> servicos) {
+	private List<TipoServicos> addservico( List<InforServicosDto> servicos, Agendamentos agendamento) {
 		List<TipoServicos> lista = new ArrayList<>();
+		double total = 0;
 		
+		if(servicos == null) {
+			System.out.println("lista vazia");
+		}
+		else {
 		for(InforServicosDto i : servicos) {
 			TipoServicos servico = ServicoService.findById(i.getNumeroServico());
 			lista.add(servico);
+			total += servico.getValor();	
 		}
+		}	
 		
+		agendamento.setValorTotal(total);
 		return lista;
 	}
 

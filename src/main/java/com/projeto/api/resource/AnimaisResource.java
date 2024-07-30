@@ -38,6 +38,12 @@ public class AnimaisResource {
 		Animais obj = service.findById(id);
 		return obj;
 	}
+	@GetMapping(value = "/buscarNomes/{nome}")
+	public List<Animais> findByNome(@PathVariable String nome){
+	List <Animais> lista = service.findbyNome(nome);
+	return lista;
+	}
+	
 	
 	@PostMapping(value = "/{id}")
 	@ResponseStatus(HttpStatus.CREATED)

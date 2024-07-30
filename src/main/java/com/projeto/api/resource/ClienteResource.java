@@ -19,6 +19,7 @@ import org.springframework.web.service.annotation.PutExchange;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.projeto.api.entidades.Clientes;
+import com.projeto.api.resource.dto.clientes.ExibirClientesdto;
 import com.projeto.api.service.ClientesService;
 
 import jakarta.annotation.Resource;
@@ -31,9 +32,14 @@ public class ClienteResource {
 	private ClientesService service;
 	
 	@GetMapping
-	public ResponseEntity<List<Clientes>> findAll(){
-		List<Clientes> list = service.findAll();
+	public ResponseEntity<List<ExibirClientesdto>> findAll(){
+		List<ExibirClientesdto> list = service.findAll();
 		return ResponseEntity.ok().body(list);
+	}
+	@GetMapping(value = "/buscarPorCelular/{celular}")
+	public ResponseEntity<ExibirClientesdto>findByCelular(@PathVariable Long celular){
+		ExibirClientesdto clientedto = service.findByCelular(celular);
+		return ResponseEntity.ok().body(clientedto);
 	}
 	
 	@GetMapping(value = "/{id}")
@@ -53,6 +59,11 @@ public class ClienteResource {
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Long id){
 		service.delete(id);
+		return ResponseEntity.noContent().build();
+	}
+	@DeleteMapping(value = "/DeletarPorCelular/{celular}")
+	public ResponseEntity<Void> deletePorCelular(@PathVariable Long celular){
+		service.deletePorCelular(celular);
 		return ResponseEntity.noContent().build();
 	}
 	
