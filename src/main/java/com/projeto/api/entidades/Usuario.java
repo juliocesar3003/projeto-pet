@@ -21,5 +21,11 @@ public class Usuario {
 
     private String senha;
 
+    @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "tb_user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "roles_id")
+    )
     private Set<Roles> roles;
 }

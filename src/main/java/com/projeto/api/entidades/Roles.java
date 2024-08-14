@@ -17,4 +17,21 @@ public class Roles {
     private Long roleId;
 
     private String name;
+
+    public enum Values {
+
+        ADMIN(1L),
+        BASIC(2L);
+
+
+        Long id;
+
+        Values(Long id) {
+            this.id = id;
+        }
+
+        public Long getId() {
+            return id;
+        }
+    }
 }
