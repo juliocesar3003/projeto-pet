@@ -1,9 +1,11 @@
 package com.projeto.api.entidades;
 
+import com.projeto.api.resource.dto.LoginRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Set;
 @Entity
@@ -28,4 +30,8 @@ public class Usuario {
             inverseJoinColumns = @JoinColumn(name = "roles_id")
     )
     private Set<Roles> roles;
+
+    public boolean isLoginCorreto(LoginRequest loginRequest, PasswordEncoder passwordEncoder) {
+      return  passwordEncoder.matches(loginRequest.password(), this.senha);
+    }
 }
