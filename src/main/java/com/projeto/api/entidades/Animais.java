@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.projeto.api.entidades.porteEnum.TipoPorte;
+import com.projeto.api.entidades.porteEnum.Porte;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -38,9 +38,10 @@ private static final long serialVersionUID = 1L;
 	
 	private String raca;
 	
-	private TipoPorte porte;
+	private Porte porte;
 	
 	private String observacao;
+	
 	
 	@JsonIgnore
 	@ManyToOne
