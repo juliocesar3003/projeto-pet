@@ -39,6 +39,7 @@ public class securityConfig {
 
         http
                 .authorizeHttpRequests(autorize -> autorize
+                        .requestMatchers(HttpMethod.POST,"/usuarios").permitAll()
                         .requestMatchers(HttpMethod.POST,"/login").permitAll()
                         .anyRequest().authenticated())
                 .csrf(csrf -> csrf.disable())
@@ -61,6 +62,7 @@ public class securityConfig {
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder(){
+
         return new BCryptPasswordEncoder();
     }
 }

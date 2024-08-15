@@ -16,7 +16,7 @@ public class Roles {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roleId;
 
-    private String name;
+    private String nome;
 
     public enum Values {
 

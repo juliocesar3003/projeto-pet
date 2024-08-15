@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
@@ -25,20 +24,20 @@ public class tokenResource {
     @Autowired
     private UsuarioRepository repository;
 
-    @Autowired
-    private  BCryptPasswordEncoder bCryptPassWorldEncoder;
+
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
 
-    public tokenResource(JwtEncoder jwtEncoder) {
+    public tokenResource(JwtEncoder jwtEncoder,BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.jwtEncoder = jwtEncoder;
-
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest){
 
         var usuario = repository.findByusuario(loginRequest.username());
 
-        if(usuario.isEmpty() || !usuario.get().isLoginCorreto(loginRequest,bCryptPassWorldEncoder)){
+        if(usuario.isEmpty() || !usuario.get().isLoginCorreto(loginRequest,bCryptPasswordEncoder)){
             throw new BadCredentialsException("usuario ou senha invalidos!");
         }
 
