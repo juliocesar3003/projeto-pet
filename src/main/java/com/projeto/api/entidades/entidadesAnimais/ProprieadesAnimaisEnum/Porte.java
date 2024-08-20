@@ -1,4 +1,4 @@
-package com.projeto.api.entidades.porteEnum;
+package com.projeto.api.entidades.entidadesAnimais.ProprieadesAnimaisEnum;
 
 public enum Porte {
 
@@ -8,11 +8,14 @@ public enum Porte {
 
 	Long id;
 
+
 	Porte(Long id) {
 		this.id = id;
+
 	}
 
 	public Long getId() {
 		return id;
 	}
+
 }

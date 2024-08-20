@@ -2,6 +2,8 @@ package com.projeto.api.resource;
 
 import java.util.List;
 
+import com.projeto.api.DTO.Requests.Reponses.ResponseAnimais;
+import com.projeto.api.DTO.Requests.RequestAnimalDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.projeto.api.entidades.Animais;
+import com.projeto.api.entidades.entidadesAnimais.Animais;
 import com.projeto.api.service.AnimaisService;
 
 @CrossOrigin(origins = "http://127.0.0.1:5500" )
@@ -34,8 +36,8 @@ public class AnimaisResource {
 	}
 	
 	@GetMapping(value = "/{id}")
-	public Animais findById(@PathVariable Long id){
-		Animais obj = service.findById(id);
+	public ResponseAnimais findById(@PathVariable Long id){
+		ResponseAnimais obj = service.findById(id);
 		return obj;
 	}
 	@GetMapping(value = "/buscarNomes/{nome}")
@@ -45,11 +47,10 @@ public class AnimaisResource {
 	}
 	
 	
-	@PostMapping(value = "/{id}")
+	@PostMapping(value = "/{tipoAnimal}/{id}")
 	@ResponseStatus(HttpStatus.CREATED)
-	public Animais insert(@PathVariable Long id, @RequestBody Animais obj ){
-		return obj = service.insert(obj, id);
-		
+	public Animais insert(@PathVariable String tipoAnimal, @PathVariable Long id, @RequestBody RequestAnimalDto obj){
+		return  service.insert(tipoAnimal, obj, id);
 	}	
 	
 	@DeleteMapping(value = "/{id}")
@@ -58,10 +59,10 @@ public class AnimaisResource {
 		service.delete(id);
 	}
 
-	@PutMapping(value =  "/{id}")
+	@PutMapping(value = "/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 		public Animais update(@PathVariable Long id, @RequestBody Animais obj){
-		return obj = service.update(id, obj);
+		return service.update(id,obj);
 		
 	}
 	
