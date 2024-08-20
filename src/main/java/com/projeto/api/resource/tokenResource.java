@@ -1,8 +1,8 @@
 package com.projeto.api.resource;
 
 import com.projeto.api.repository.UsuarioRepository;
-import com.projeto.api.resource.dto.LoginRequest;
-import com.projeto.api.resource.dto.LoginResponse;
+import com.projeto.api.DTO.Requests.LoginRequest;
+import com.projeto.api.DTO.Requests.Reponses.LoginResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -44,12 +44,19 @@ public class tokenResource {
         var now = Instant.now();
         var expiresIn = 300L;
 
-        var claims = JwtClaimsSet.builder()
+        var claimsBuilder = JwtClaimsSet.builder()
                 .issuer("backEnd-pet")
                 .subject(usuario.get().getId().toString())
                 .issuedAt(now)
-                .expiresAt(now.plusSeconds(expiresIn))
-                .build();
+                .expiresAt(now.plusSeconds(expiresIn));
+
+
+        if(usuario.get().getEmpresaAssociada() != null){
+            var empresaId = usuario.get().getEmpresaAssociada().getId();
+            claimsBuilder.claim("empresaId",empresaId);
+        }
+
+        var claims = claimsBuilder.build();
 
         var jwtValue = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
 

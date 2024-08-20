@@ -1,6 +1,6 @@
-package com.projeto.api.entidades;
+package com.projeto.api.entidades.sobreUsuario;
 
-import com.projeto.api.resource.dto.LoginRequest;
+import com.projeto.api.DTO.Requests.LoginRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,6 +22,10 @@ public class Usuario {
     private String usuario;
 
     private String senha;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "empresa_id",referencedColumnName = "id")
+    private Empresa empresaAssociada;
 
     @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinTable(

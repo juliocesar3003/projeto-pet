@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.projeto.api.entidades.Agendamentos;
 import com.projeto.api.entidades.Clientes;
+import com.projeto.api.entidades.sobreUsuario.Empresa;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,6 +42,10 @@ private static final long serialVersionUID = 1L;
 	private String raca;
 
 	private String observacao;
+
+	@ManyToOne
+	@JoinColumn(name = "empresa_id")
+	private Empresa empresaAssociada;
 
 	@JsonIgnore
 	@ManyToOne

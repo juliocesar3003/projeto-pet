@@ -7,11 +7,10 @@ import java.util.List;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-import jakarta.persistence.CascadeType;
+import com.projeto.api.entidades.Servicos.Servico;
+import com.projeto.api.entidades.entidadesAnimais.Animais;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -19,7 +18,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -53,21 +51,21 @@ private static final long serialVersionUID = 1L;
 	@JoinTable(name = "tb_agendamento_servico",
 	joinColumns = @JoinColumn(name = "agendamento_id"),
 	inverseJoinColumns = @JoinColumn(name = "servico_id"))
-	private List<TipoServicos> servicos = new ArrayList<>(); 
+	private List<Servico> servicos = new ArrayList<>();
 	
 	private Double valorTotal;
 	
-    public void addServico(TipoServicos servico) {
+    public void addServico(Servico servico) {
         this.servicos.add(servico);
     }
 	
-	public void getTotal(){
-		Double soma = 0.0;
-		for(TipoServicos x : servicos ) {
-			soma += x.getValor();
-		}
-		 setValorTotal(soma);
-	}
+//	public void getTotal(){
+//		Double soma = 0.0;
+//		for(Servico x : servicos ) {
+//			soma += x.getValor();
+//		}
+//		 setValorTotal(soma);
+//	}
 	
 	
 }
