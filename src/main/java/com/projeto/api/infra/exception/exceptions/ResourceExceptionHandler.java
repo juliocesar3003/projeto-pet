@@ -1,4 +1,4 @@
-package com.projeto.api.service.exceptions;
+package com.projeto.api.infra.exception.exceptions;
 
 import java.time.Instant;
 
@@ -28,5 +28,9 @@ public ResponseEntity<StandardError> DataBaseException(DataBaseException e, Http
 	StandardError err = new StandardError(Instant.now(), status.value(), error, e.getMessage(), request.getRequestURI());
 		return ResponseEntity.status(status).body(err);
      }
+	 @ExceptionHandler(CustomIllegalArgumentException.class)
+	 private ResponseEntity<String> handleCustomIllegalArgumentException(CustomIllegalArgumentException exception){
+		return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
+	 }
 	}
 	

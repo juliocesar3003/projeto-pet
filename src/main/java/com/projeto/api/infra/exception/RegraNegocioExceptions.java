@@ -1,4 +1,4 @@
-package com.projeto.api.service.exception;
+package com.projeto.api.infra.exception;
 
 public class RegraNegocioExceptions extends RuntimeException {
 
