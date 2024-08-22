@@ -1,4 +1,4 @@
-package com.projeto.api.resource.dto;
+package com.projeto.api.DTO.Requests;
 
 public record LoginRequest(String username, String password) {
 }

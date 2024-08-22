@@ -32,5 +32,10 @@ public ResponseEntity<StandardError> DataBaseException(DataBaseException e, Http
 	 private ResponseEntity<String> handleCustomIllegalArgumentException(CustomIllegalArgumentException exception){
 		return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
 	 }
+
+	@ExceptionHandler(CustomACessDeniedException.class)
+	private ResponseEntity<String> handleCustomACessDeniedException(CustomACessDeniedException exception){
+		return  ResponseEntity.status(HttpStatus.FORBIDDEN).body(exception.getMessage());
+	}
 	}
 	
