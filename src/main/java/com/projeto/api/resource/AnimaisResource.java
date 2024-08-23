@@ -3,9 +3,10 @@ package com.projeto.api.resource;
 import java.util.List;
 
 import com.projeto.api.DTO.Requests.Reponses.ResponseAnimais;
-import com.projeto.api.DTO.Requests.RequestAnimalDto;
+import com.projeto.api.DTO.Requests.AnimalRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,14 +31,14 @@ public class AnimaisResource {
 	private AnimaisService service;
 	
 	@GetMapping
-	public List<Animais> findAll(){
-	List <Animais> lista = service.findAll();
+	public List<ResponseAnimais> findAll(JwtAuthenticationToken token){
+	List <ResponseAnimais> lista = service.findAll(token);
 	return lista;
 	}
 	
 	@GetMapping(value = "/{id}")
-	public ResponseAnimais findById(@PathVariable Long id){
-		ResponseAnimais obj = service.findById(id);
+	public ResponseAnimais findById(@PathVariable Long id, JwtAuthenticationToken token){
+		ResponseAnimais obj = service.findById(id,token);
 		return obj;
 	}
 	@GetMapping(value = "/buscarNomes/{nome}")
@@ -49,20 +50,20 @@ public class AnimaisResource {
 	
 	@PostMapping(value = "/{tipoAnimal}/{id}")
 	@ResponseStatus(HttpStatus.CREATED)
-	public Animais insert(@PathVariable String tipoAnimal, @PathVariable Long id, @RequestBody RequestAnimalDto obj){
-		return  service.insert(tipoAnimal, obj, id);
+	public void insert(@PathVariable String tipoAnimal, @PathVariable Long id, @RequestBody AnimalRequest obj, JwtAuthenticationToken token){
+		service.insert(tipoAnimal, obj, id,token);
 	}	
 	
 	@DeleteMapping(value = "/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void delete(@PathVariable Long id){
-		service.delete(id);
+	public void delete(@PathVariable Long id,JwtAuthenticationToken token){
+		service.delete(id,token);
 	}
 
 	@PutMapping(value = "/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-		public Animais update(@PathVariable Long id, @RequestBody Animais obj){
-		return service.update(id,obj);
+		public void update(@PathVariable Long id, @RequestBody Animais obj,JwtAuthenticationToken token){
+		 service.update(id,obj,token);
 		
 	}
 	

@@ -3,7 +3,7 @@ package com.projeto.api.DTO.Requests;
 import lombok.NonNull;
 
 
-public record RequestAnimalDto(
+public record AnimalRequest(
        @NonNull String nome,
        @NonNull String raca,
        @NonNull String obs,

@@ -1,17 +1,23 @@
 package com.projeto.api.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
-
 import com.projeto.api.DTO.Requests.Reponses.ResponseAnimais;
-import com.projeto.api.DTO.Requests.RequestAnimalDto;
+import com.projeto.api.DTO.Requests.AnimalRequest;
 import com.projeto.api.entidades.entidadesAnimais.Cachorro;
 import com.projeto.api.entidades.entidadesAnimais.ProprieadesAnimaisEnum.Pelagem;
 import com.projeto.api.entidades.entidadesAnimais.ProprieadesAnimaisEnum.Porte;
 import com.projeto.api.entidades.entidadesAnimais.factory.AnimalFactory;
+import com.projeto.api.entidades.sobreUsuario.Empresa;
+import com.projeto.api.infra.exception.exceptions.CustomACessDeniedException;
+import com.projeto.api.infra.exception.exceptions.CustomIllegalArgumentException;
+import com.projeto.api.repository.ClienteRepository;
+import com.projeto.api.repository.EmpresaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import com.projeto.api.entidades.entidadesAnimais.Animais;
@@ -32,55 +38,104 @@ public class AnimaisService {
 	private AnimaisRepository repository;
 
 	@Autowired
-	private ClientesService clienteService;
+	private ClienteRepository clienteRepository;
+
+	@Autowired
+	private EmpresaRepository empresaRepository;
 	
-	public List<Animais> findAll(){
-		return repository.findAll();
+	public List<ResponseAnimais> findAll(JwtAuthenticationToken token){
+
+		Empresa empresa = autenticarToken(token);
+
+		List<Animais> lista = repository.findByEmpresaAssociadaId(empresa.getId());
+
+		return converterInResponse(lista);
 	}
+
+	private List<ResponseAnimais> converterInResponse(List<Animais> lista) {
+		List<ResponseAnimais> listaCachorro = new ArrayList<>();
+		for (Animais i : lista) {
+			listaCachorro.add(transformeInReponse((Cachorro) i));
+		}
+
+		return listaCachorro;
+	}
+
 	public List<Animais> findbyNome(String nome){
 		return repository.findByNome(nome);
 	}
 	
-	public ResponseAnimais findById(Long id) {
+	public ResponseAnimais findById(Long id,JwtAuthenticationToken token) {
+
+		Empresa empresa = autenticarToken(token);
+
+		ResponseAnimais response = null;
+
 		Animais animal = repository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException(id));
 
-		if (animal instanceof Cachorro) {
-			return transformeInReponse((Cachorro) animal);
-		} else {
-			return transformeInReponseGenerico(animal);
-		}
+		if(empresa.getId().equals(animal.getEmpresaAssociada().getId())){
 
+			if (animal instanceof Cachorro) {
+				return response = transformeInReponse((Cachorro) animal);
+			}
+			else {
+				return response = transformeInReponseGenerico(animal);
+			}
+		}
+		else{
+			throw  new CustomACessDeniedException("animal não pertence à empresa do usuario logado");
+		}
 	}
 
-	public Animais insert( String tipo,RequestAnimalDto	 obj, long id) {
+	public Animais insert(String tipo, AnimalRequest obj, long id, JwtAuthenticationToken token) {
 
-		Animais pet = transformarObjAnimal(obj,tipo,id);
+		Empresa empresa = autenticarToken(token);
+
+		Animais pet = transformarObjAnimal(obj,tipo,id,empresa);
+
 		return repository.save(pet);
 	}
 	
-	public void delete(Long id) {
+	public void delete(Long id, JwtAuthenticationToken token) {
 		try {
-			repository.deleteById(id);
-		}
-		catch(EmptyResultDataAccessException e) {
-			throw new ResourceNotFoundException(id);
+			Empresa empresa = autenticarToken(token);
+
+			Animais animal = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException(id));
+
+			if(empresa.getId().equals(animal.getEmpresaAssociada().getId())){
+
+				repository.deleteById(id);
+			}
+			else{
+				throw new RuntimeException("opsss deu algum erro! Não foi possivel deletar esse id");
+			}
 		}
 		catch(DataIntegrityViolationException e) {
 			throw new DataBaseException(e.getMessage());
 		}
 	}
 	
-	public Animais update(Long id, Animais obj) {
-			Animais animal = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
+	public Animais update(Long id, Animais obj,JwtAuthenticationToken token) {
 
-			if (animal instanceof Cachorro) {
-			 	 updateAnimal((Cachorro) animal,(Cachorro) obj);
-				  return  repository.save(animal);
+		   Empresa empresa = autenticarToken(token);
+
+		   Animais animal = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
+
+			if(empresa.getId().equals(animal.getEmpresaAssociada().getId())){
+
+				if (animal instanceof Cachorro) {
+					updateAnimal((Cachorro) animal,(Cachorro) obj);
+					return  repository.save(animal);
+				}
+				else {
+					updateAnimalGenerico(animal,obj);
+					return repository.save(animal);
+				}
+
 			}
-			else {
-				updateAnimalGenerico(animal,obj);
-				return repository.save(animal);
+			else{
+				throw new CustomACessDeniedException("animal não pertence à empresa do usuario logado");
 			}
 
 
@@ -101,14 +156,18 @@ public class AnimaisService {
 	}
 
 
-	private Animais transformarObjAnimal(RequestAnimalDto obj, String tipo,Long id){
-		Clientes cliente = clienteService.findByid(id);
+	private Animais transformarObjAnimal(AnimalRequest obj, String tipo, Long id, Empresa empresa){
+
+
+		Clientes cliente = clienteRepository.findById(id).orElseThrow(
+				()-> new ResourceNotFoundException(id));
 		Animais pet =
 			factory.criarPet(tipo,
 					obj.nome(),
 					obj.raca(),
 					obj.obs(),
 					cliente,
+					empresa,
 					Porte.valueOf(obj.porte()),
 					Pelagem.valueOf(obj.pelagem())
 					);
@@ -140,6 +199,29 @@ public class AnimaisService {
 				null,
 				null
 		);
+	}
+
+	private Empresa autenticarToken(JwtAuthenticationToken token) {
+
+		Object empresaIdObject = token.getTokenAttributes().get("empresaId");
+
+		if (empresaIdObject == null) {
+			throw new CustomIllegalArgumentException("O atributo 'empresaId' não está presente no token.");
+		}
+
+		Long empresaId;
+		try {
+			empresaId = Long.valueOf(empresaIdObject.toString());
+		} catch (NumberFormatException e) {
+			throw new CustomIllegalArgumentException("O atributo 'empresaId' não é um número válido.");
+		}
+
+
+		Empresa empresa = empresaRepository.findById(empresaId)
+				.orElseThrow(() -> new ResourceNotFoundException("Empresa não encontrada"));
+
+		return empresa;
+
 	}
 
 

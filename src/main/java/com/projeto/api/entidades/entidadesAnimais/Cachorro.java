@@ -3,6 +3,7 @@ import com.projeto.api.entidades.Agendamentos;
 import com.projeto.api.entidades.Clientes;
 import com.projeto.api.entidades.entidadesAnimais.ProprieadesAnimaisEnum.Pelagem;
 import com.projeto.api.entidades.entidadesAnimais.ProprieadesAnimaisEnum.Porte;
+import com.projeto.api.entidades.sobreUsuario.Empresa;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,8 +26,8 @@ public class Cachorro extends Animais{
     @Enumerated(EnumType.STRING)
     private Pelagem pelagem;
 
-    public Cachorro(String nome, String raca, String observacao, Clientes cliente, Porte porte, Pelagem pelagem) {
-        super(nome, raca, observacao, cliente);
+    public Cachorro(String nome, String raca, String observacao, Clientes cliente, Empresa empresa, Porte porte, Pelagem pelagem) {
+        super(nome, raca, observacao, cliente,empresa);
         this.porte = porte;
         this.pelagem = pelagem;
     }

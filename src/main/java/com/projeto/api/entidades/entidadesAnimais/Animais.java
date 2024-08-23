@@ -13,11 +13,8 @@ import com.projeto.api.entidades.Clientes;
 import com.projeto.api.entidades.sobreUsuario.Empresa;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
-
 
 
 @Entity
@@ -56,10 +53,11 @@ private static final long serialVersionUID = 1L;
 	@OneToMany(mappedBy = "animal")
 	private List<Agendamentos> agendamentosPet = new ArrayList<>();
 
-	public Animais(String nome, String raca, String observacao, Clientes cliente) {
+	public Animais(String nome, String raca, String observacao, Clientes cliente,Empresa empresa) {
 		this.nome = nome;
 		this.raca = raca;
 		this.observacao = observacao;
 		this.cliente = cliente;
+		this.empresaAssociada = empresa;
 	}
 }
