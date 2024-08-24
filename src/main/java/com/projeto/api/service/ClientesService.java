@@ -1,30 +1,17 @@
 package com.projeto.api.service;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-
 import com.projeto.api.DTO.Requests.Reponses.ClienteResponse;
-import com.projeto.api.entidades.entidadesAnimais.Animais;
 import com.projeto.api.entidades.entidadesAnimais.Cachorro;
 import com.projeto.api.entidades.sobreUsuario.Empresa;
-import com.projeto.api.infra.exception.exceptions.CustomACessDeniedException;
-import com.projeto.api.infra.exception.exceptions.CustomIllegalArgumentException;
-import com.projeto.api.repository.EmpresaRepository;
-import jakarta.persistence.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
-
 import com.projeto.api.entidades.Clientes;
 import com.projeto.api.repository.ClienteRepository;
-import com.projeto.api.infra.exception.exceptions.DataBaseException;
 import com.projeto.api.infra.exception.exceptions.ResourceNotFoundException;
 
-import jakarta.persistence.EntityNotFoundException;
+
 
 @Service
 public class ClientesService {
@@ -33,12 +20,12 @@ public class ClientesService {
 	private ClienteRepository repository;
 
 	@Autowired
-	private EmpresaRepository empresaRepository;
+	private EmpresaService empresaService;
 
 
 	public List<ClienteResponse> findAll(JwtAuthenticationToken token){
 
-		Empresa empresa = autenticarToken(token);
+		Empresa empresa = empresaService.autenticarToken(token);
 
 			List<Clientes> listaClients = repository.findByEmpresaAssociadaId(empresa.getId());
 
@@ -70,21 +57,18 @@ public class ClientesService {
 
 	public ClienteResponse findByid(Long id,JwtAuthenticationToken token) {
 
-		Empresa empresa = autenticarToken(token);
+		Empresa empresa = empresaService.autenticarToken(token);
 
 		 Clientes cliente = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException(id));
 
-		if(empresa.getId().equals(cliente.getEmpresaAssociada().getId())){
+		 cliente = verificarClienteAssociado(cliente,empresa);
 			return converterClienteEmDto(cliente);
-		}
-		else{
-			throw  new AccessDeniedException("Cliente não pertence à empresa do usuario logado");
-		}
+
 	}
 	
 	public Clientes insert(Clientes obj, JwtAuthenticationToken token) {
 
-		 Empresa empresa = autenticarToken(token);
+		 Empresa empresa = empresaService.autenticarToken(token);
 
 		 Clientes cliente = CriarData(obj,empresa);
 
@@ -95,41 +79,31 @@ public class ClientesService {
 
 	public void delete(Long id,JwtAuthenticationToken token) {
 
-			Empresa empresa = autenticarToken(token);
+			Empresa empresa = empresaService.autenticarToken(token);
 
 			Clientes cliente = repository.findById(id).orElseThrow(
 					()-> new ResourceNotFoundException(id));
 
-			if(empresa.getId().equals(cliente.getEmpresaAssociada().getId())){
-				repository.deleteById(id);
-			}
-			else{
-				throw new RuntimeException("opsss deu algum erro! Não foi possivel deletar esse id");
-			}
+			cliente = verificarClienteAssociado(cliente,empresa);
 
+				repository.deleteById(cliente.getId());
 	}
 
 	public ClienteResponse update (Long id ,Clientes obj, JwtAuthenticationToken token) {
-		try {
-			Empresa empresa = autenticarToken(token);
+
+			Empresa empresa = empresaService.autenticarToken(token);
+
 			Clientes cliente = repository.getReferenceById(id);
-			if(empresa.getId().equals(cliente.getEmpresaAssociada().getId())){
 
-				cliente = updateData(obj,cliente);
+			cliente = verificarClienteAssociado(cliente,empresa);
 
-				repository.save(cliente);
+			cliente = updateData(obj,cliente);
 
-				ClienteResponse response = converterClienteEmDto(cliente);
+			repository.save(cliente);
 
-				return response;
-			}
-			else{
-				throw  new CustomACessDeniedException("Cliente não pertence à empresa do usuario logado");
-			}
-		}
-		catch(EntityNotFoundException e) {
-			throw new ResourceNotFoundException(id);
-		}
+			ClienteResponse response = converterClienteEmDto(cliente);
+
+			return response;
 	}
 
 	private Clientes CriarData(Clientes obj,Empresa empresa ) {
@@ -149,26 +123,7 @@ public class ClientesService {
 		return cliente;
 	}
 
-	private Empresa autenticarToken(JwtAuthenticationToken token) {
-
-		Object empresaIdObject = token.getTokenAttributes().get("empresaId");
-
-		if (empresaIdObject == null) {
-			throw new CustomIllegalArgumentException("O atributo 'empresaId' não está presente no token.");
-		}
-
-		Long empresaId;
-		try {
-			empresaId = Long.valueOf(empresaIdObject.toString());
-		} catch (NumberFormatException e) {
-			throw new CustomIllegalArgumentException("O atributo 'empresaId' não é um número válido.");
-		}
-
-
-		Empresa empresa = empresaRepository.findById(empresaId)
-				.orElseThrow(() -> new ResourceNotFoundException("Empresa não encontrada"));
-
-		return empresa;
-
+	public Clientes verificarClienteAssociado(Clientes clientes, Empresa empresa) {
+		return empresaService.verificarAssociacaoComEmpresa(clientes, empresa, Clientes::getEmpresaAssociada);
 	}
 }
