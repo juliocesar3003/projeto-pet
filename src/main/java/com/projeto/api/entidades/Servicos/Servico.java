@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import com.projeto.api.entidades.Agendamentos;
+import com.projeto.api.entidades.sobreAgendamento.Agendamentos;
 import com.projeto.api.entidades.sobreUsuario.Empresa;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -25,6 +25,9 @@ public class Servico implements Serializable{
 	private Long id;
 
 	private String nome;
+
+	@OneToOne(mappedBy = "servico")
+	private ValoresPorServico valor;
 
 	@ManyToOne
 	@JoinColumn(name = "empresa_id")

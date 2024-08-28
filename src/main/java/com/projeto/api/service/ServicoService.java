@@ -41,6 +41,17 @@ public class ServicoService {
 
 	}
 
+	public Servico findByIdInterno(Long id,JwtAuthenticationToken token) {
+
+		Empresa empresa = empresaService.autenticarToken(token);
+
+		Servico obj = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
+
+		obj = verificarServicoAssociado(obj,empresa);
+
+		return obj;
+
+	}
 
 
 	public ServicoResponse findById(Long id,JwtAuthenticationToken token) {
