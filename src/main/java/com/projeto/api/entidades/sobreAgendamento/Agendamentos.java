@@ -1,4 +1,4 @@
-package com.projeto.api.entidades;
+package com.projeto.api.entidades.sobreAgendamento;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import com.projeto.api.entidades.Clientes;
 import com.projeto.api.entidades.Servicos.Servico;
 import com.projeto.api.entidades.entidadesAnimais.Animais;
 import jakarta.persistence.Entity;

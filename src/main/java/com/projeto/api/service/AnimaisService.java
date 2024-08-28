@@ -1,23 +1,25 @@
 package com.projeto.api.service;
-import java.util.ArrayList;
-import java.util.List;
-import com.projeto.api.DTO.Requests.Reponses.ResponseAnimais;
+
 import com.projeto.api.DTO.Requests.AnimalRequest;
+import com.projeto.api.DTO.Requests.Reponses.ResponseAnimais;
+import com.projeto.api.entidades.Clientes;
+import com.projeto.api.entidades.entidadesAnimais.Animais;
 import com.projeto.api.entidades.entidadesAnimais.Cachorro;
 import com.projeto.api.entidades.entidadesAnimais.ProprieadesAnimaisEnum.Pelagem;
 import com.projeto.api.entidades.entidadesAnimais.ProprieadesAnimaisEnum.Porte;
 import com.projeto.api.entidades.entidadesAnimais.factory.AnimalFactory;
 import com.projeto.api.entidades.sobreUsuario.Empresa;
+import com.projeto.api.infra.exception.exceptions.DataBaseException;
+import com.projeto.api.infra.exception.exceptions.ResourceNotFoundException;
+import com.projeto.api.repository.AnimaisRepository;
 import com.projeto.api.repository.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
-import com.projeto.api.entidades.entidadesAnimais.Animais;
-import com.projeto.api.entidades.Clientes;
-import com.projeto.api.repository.AnimaisRepository;
-import com.projeto.api.infra.exception.exceptions.DataBaseException;
-import com.projeto.api.infra.exception.exceptions.ResourceNotFoundException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 

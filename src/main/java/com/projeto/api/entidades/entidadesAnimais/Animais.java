@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.projeto.api.entidades.Agendamentos;
+import com.projeto.api.entidades.sobreAgendamento.Agendamentos;
 import com.projeto.api.entidades.Clientes;
 import com.projeto.api.entidades.sobreUsuario.Empresa;
 import jakarta.persistence.*;

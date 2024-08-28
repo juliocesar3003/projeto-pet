@@ -1,13 +1,12 @@
 package com.projeto.api.resource;
 
-import com.projeto.api.entidades.Roles;
-import com.projeto.api.entidades.Usuario;
+import com.projeto.api.entidades.sobreUsuario.Roles;
+import com.projeto.api.entidades.sobreUsuario.Usuario;
 import com.projeto.api.repository.RolesRepository;
 import com.projeto.api.repository.UsuarioRepository;
 import com.projeto.api.resource.dto.CriarUsuarioDto;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.BeanDefinitionDsl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.projeto.api.DTO.Requests.Reponses.ResponseAnimais;
 import com.projeto.api.DTO.Requests.AnimalRequest;
+import com.projeto.api.service.AnimaisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.projeto.api.entidades.entidadesAnimais.Animais;
-import com.projeto.api.service.AnimaisService;
 
 @CrossOrigin(origins = "http://127.0.0.1:5500" )
 @RestController

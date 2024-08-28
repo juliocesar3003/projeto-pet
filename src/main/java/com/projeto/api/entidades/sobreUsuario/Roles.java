@@ -1,16 +1,19 @@
-package com.projeto.api.entidades;
+package com.projeto.api.entidades.sobreUsuario;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Entity
 @Table(name = "tb_roles")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Roles {
+public class Roles  implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

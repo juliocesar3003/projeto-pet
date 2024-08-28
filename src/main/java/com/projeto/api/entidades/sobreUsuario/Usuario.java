@@ -7,13 +7,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.io.Serializable;
 import java.util.Set;
 @Entity
 @Table(name = "tb_usuarios")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Usuario {
+public class Usuario implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,5 +1,4 @@
 package com.projeto.api.entidades.entidadesAnimais;
-import com.projeto.api.entidades.Agendamentos;
 import com.projeto.api.entidades.Clientes;
 import com.projeto.api.entidades.entidadesAnimais.ProprieadesAnimaisEnum.Pelagem;
 import com.projeto.api.entidades.entidadesAnimais.ProprieadesAnimaisEnum.Porte;
@@ -8,8 +7,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 
 @Entity

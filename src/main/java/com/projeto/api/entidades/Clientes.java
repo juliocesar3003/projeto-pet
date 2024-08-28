@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.projeto.api.entidades.entidadesAnimais.Animais;
+import com.projeto.api.entidades.sobreAgendamento.Agendamentos;
 import com.projeto.api.entidades.entidadesAnimais.Cachorro;
 import com.projeto.api.entidades.sobreUsuario.Empresa;
 import jakarta.persistence.*;

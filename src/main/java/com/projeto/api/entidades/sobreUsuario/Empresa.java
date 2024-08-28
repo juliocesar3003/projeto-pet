@@ -42,4 +42,6 @@ public class Empresa implements Serializable {
     @OneToMany(mappedBy = "empresaAssociada")
     private List<ValoresPorServico> valorServico = new ArrayList<>();
 
+
+
 }
