@@ -1,4 +1,4 @@
-package com.projeto.api.DTO.Requests.Reponses;
+package com.projeto.api.DTO.Reponses;
 
 import org.springframework.lang.NonNull;
 

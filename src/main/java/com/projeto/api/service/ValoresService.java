@@ -1,7 +1,7 @@
 package com.projeto.api.service;
 
-import com.projeto.api.DTO.Requests.Reponses.ValoresResponse;
-import com.projeto.api.DTO.Requests.ValoresServicoRequest;
+import com.projeto.api.DTO.Reponses.ValoresResponse;
+import com.projeto.api.DTO.Request.ValoresServicoRequest;
 import com.projeto.api.entidades.Servicos.Servico;
 import com.projeto.api.entidades.Servicos.ValoresPorServico;
 import com.projeto.api.entidades.sobreUsuario.Empresa;
@@ -29,7 +29,7 @@ public class ValoresService {
     @Autowired
     private ServicoService serivcoService;
 
-    public List<ValoresResponse> findAll(JwtAuthenticationToken token){
+    public List<ValoresResponse> findAllResponse(JwtAuthenticationToken token){
 
         Empresa empresa = empresaService.autenticarToken(token);
 
@@ -39,7 +39,17 @@ public class ValoresService {
 
     }
 
-    public ValoresResponse findById(Long id,JwtAuthenticationToken token) {
+    public List<ValoresPorServico> findAll(JwtAuthenticationToken token){
+
+        Empresa empresa = empresaService.autenticarToken(token);
+
+        List<ValoresPorServico> lista = repository.findByEmpresaAssociadaId(empresa.getId());
+
+        return lista;
+
+    }
+
+    public ValoresResponse findByIdResponse(Long id,JwtAuthenticationToken token) {
 
         Empresa empresa = empresaService.autenticarToken(token);
 
@@ -48,6 +58,18 @@ public class ValoresService {
         obj = verificarValorAssociado(obj,empresa);
 
         return trasformeResponse(obj);
+
+    }
+
+    public ValoresPorServico findById(Long id,JwtAuthenticationToken token) {
+
+        Empresa empresa = empresaService.autenticarToken(token);
+
+        ValoresPorServico obj = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
+
+        obj = verificarValorAssociado(obj,empresa);
+
+        return obj;
 
     }
 
@@ -120,7 +142,7 @@ public class ValoresService {
         return empresaService.verificarAssociacaoComEmpresa(valor, empresa, ValoresPorServico::getEmpresaAssociada);
     }
 
-    private List<ValoresResponse> transformeListResponse(List<ValoresPorServico> lista) {
+    public List<ValoresResponse> transformeListResponse(List<ValoresPorServico> lista) {
 
         List<ValoresResponse> listResponse = new ArrayList<>();
         for(ValoresPorServico i : lista){

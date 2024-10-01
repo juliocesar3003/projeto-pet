@@ -4,6 +4,7 @@ import com.projeto.api.entidades.Clientes;
 import com.projeto.api.entidades.Servicos.Servico;
 import com.projeto.api.entidades.entidadesAnimais.Animais;
 import com.projeto.api.entidades.Servicos.ValoresPorServico;
+import com.projeto.api.entidades.sobreAgendamento.Agendamentos;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -41,6 +42,12 @@ public class Empresa implements Serializable {
 
     @OneToMany(mappedBy = "empresaAssociada")
     private List<ValoresPorServico> valorServico = new ArrayList<>();
+
+    @OneToMany(mappedBy = "empresaAssociada")
+    private List<ValoresPorServico> maquinaCartao = new ArrayList<>();
+
+    @OneToMany(mappedBy = "empresaAssociada")
+    private List<Agendamentos> Agendamentos = new ArrayList<>();
 
 
 

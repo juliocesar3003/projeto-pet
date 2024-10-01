@@ -1,8 +1,25 @@
 package com.projeto.api.service;
 
+import com.projeto.api.DTO.Reponses.AgendamentoResponse;
+import com.projeto.api.DTO.Reponses.ResponseAnimais;
+import com.projeto.api.DTO.Reponses.ValoresResponse;
+import com.projeto.api.DTO.Request.AgendamentoRequest;
+import com.projeto.api.entidades.Clientes;
+import com.projeto.api.entidades.Servicos.ValoresPorServico;
+import com.projeto.api.entidades.entidadesAnimais.Animais;
+import com.projeto.api.entidades.entidadesAnimais.Cachorro;
+import com.projeto.api.entidades.sobreAgendamento.Builder.AgendamentoBuilder;
+import com.projeto.api.entidades.sobreAgendamento.Stage.*;
+import com.projeto.api.entidades.sobreAgendamento.StatusAgendamento;
+import com.projeto.api.entidades.sobreAgendamento.TaxaDeAtraso;
+import com.projeto.api.entidades.sobreUsuario.Empresa;
+import com.projeto.api.infra.exception.exceptions.CustomDeleteporStageError;
+import com.projeto.api.infra.exception.exceptions.CustomIllegalArgumentException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import com.projeto.api.entidades.sobreAgendamento.Agendamentos;
@@ -15,119 +32,236 @@ import com.projeto.api.infra.exception.exceptions.DataBaseException;
 import com.projeto.api.infra.exception.exceptions.ResourceNotFoundException;
 
 
-import jakarta.persistence.EntityNotFoundException;
+
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Service
 public class AgendamentosService {
 
 	@Autowired
 	private AgendamentosRepository repository;
-	
 
-	
 	@Autowired
 	private ClientesService clienteService;
+
+	@Autowired
+	private AnimaisService animaisService;
 	
 	@Autowired
-	private ServicoService ServicoService;
+	private ValoresService valoresService;
+
+	@Autowired
+	private AgendamentoDirector director;
+
+	@Autowired
+	private EmpresaService empresaService;
+	
+
+	public List<AgendamentoResponse> findAllResponse(JwtAuthenticationToken token){
+
+		Empresa empresa = empresaService.autenticarToken(token);
+
+		List<Agendamentos> lista = repository.findByEmpresaAssociadaId(empresa.getId());
+
+		List<AgendamentoResponse> listaResponse = new ArrayList<>();
+
+		for (Agendamentos i : lista){
+			listaResponse.add(criarResponse(i));
+		}
+
+
+		return listaResponse;
+
+	}
+
+
+
+	public AgendamentoResponse findByIdResponse(Long id, JwtAuthenticationToken token) {
+		Empresa empresa = empresaService.autenticarToken(token);
+
+		Agendamentos agendamento = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException(id));
+
+		agendamento = verificarAgendamentoAssociado(agendamento,empresa);
+
+		AgendamentoResponse response = criarResponse(agendamento);
+
+	    return response;
+
+	}
+
+	private AgendamentoResponse criarResponse(Agendamentos obj) {
+
+		ResponseAnimais responseAnimal = transformarResponseAnimais(obj);
+		List<ValoresResponse> valoresResponses = valoresService.transformeListResponse(obj.getServicos());
+
+				AgendamentoResponse response =  new AgendamentoResponse(
+						obj.getId(),
+						obj.getHorarioEntrada(),
+						obj.getHorarioEntradaRealizada(),
+						obj.getHorarioSaida(),
+						obj.getHorarioSaidaRealizada(),
+						obj.getFormaDePagamento().toString(),
+						obj.getStatus().toString(),
+						obj.getCliente().getNome(),
+						responseAnimal,
+						valoresResponses,
+						obj.getValorTotal()
+				);
+		return response;
+	}
+
+	private ResponseAnimais transformarResponseAnimais(Agendamentos obj){
+		if(obj.getAnimal() instanceof Cachorro){
+			ResponseAnimais responseAnimal = animaisService.transformeInReponse((Cachorro) obj.getAnimal());
+			return responseAnimal;
+		}
+		else{
+			ResponseAnimais responseAnimalGenerico = animaisService.transformeInReponseGenerico((Animais) obj.getAnimal());
+			return responseAnimalGenerico;
+		}
+	}
+
+
+
+
 	
 
 
-  
-//
-//	@Transactional(readOnly = true)
-//	public List<ExibirAgendamentoDTO> findAll(){
-//		List<Agendamentos> lista =  repository.findAll();
-//		return converterListaDeAgendamentos(lista);
-//	}
-//
-//
-//	private List<ExibirAgendamentoDTO> converterListaDeAgendamentos(List<Agendamentos> lista) {
-//		List<ExibirAgendamentoDTO> listaDto = new ArrayList<>();
-//		for(Agendamentos i : lista) {
-//		ExibirAgendamentoDTO obj =converterobj(i);
-//		listaDto.add(obj);
-//		}
-//		return listaDto ;
-//		}
-//
-//
-//
-//	@Transactional(readOnly = true)
-//	public ExibirAgendamentoDTO findById(Long id) {
-//	    Optional<Agendamentos> objOptional = repository.findById(id);
-//	    Agendamentos obj = objOptional.orElseThrow(() -> new ResourceNotFoundException(id));
-//	    return converterobj(obj);
-//
-//	}
-//
-//	private ExibirAgendamentoDTO converterobj(Agendamentos obj) {
-//
-//	ExibirAgendamentoDTO Dto = new ExibirAgendamentoDTO();
-//
-//	return	Dto.builder()
-//		.NumeroCelular(obj.getCliente().getCelular())
-//		  .nomeAnimal(obj.getAnimal()
-//			.getNome())
-//		     .nomeCliente(obj.getCliente().getNome())
-//		      .servicos(converter(obj.getServicos()))
-//		       .date(obj.getDate())
-//		        .ValorTotal(obj.getValorTotal()).build();
-//
-//	}
 
-	
+	@Transactional
+	public void iniciarAgendamento(AgendamentoRequest obj, JwtAuthenticationToken token){
 
-//	private List<ExibirServicosDto> converter(List<Servico> servicos) {
-//		return servicos.stream().map(
-//				servico -> ExibirServicosDto.builder()
-//				.NomeServico(servico.getServico())
-//				.Valor(servico.getValor())
-//				.build()
-//				).collect(Collectors.toList());
-//
-//	}
+		Agendamentos agendamento = criarAgendamento(obj,token);
 
-//	@Transactional
-//	public Agendamentos insert(AgendamentosDTO obj){
-//		Agendamentos agendamento = new Agendamentos();
-//		Animais objAnimal =  animaisService.findById(obj.getIdAnimal());
-//		agendamento.setDate(obj.getData());
-//		agendamento.setAnimal(objAnimal);
-//		agendamento.setCliente(objAnimal.getCliente());
-//		List<TipoServicos> lista = addservico(obj.getServicos(), agendamento);
-//	    agendamento.getServicos().addAll(lista);
-//		repository.save(agendamento);
-//		return agendamento;
-//
-//		}
-	 
-		
-	
+		repository.save(agendamento);
 
-//	private List<Servico> addservico(List<InforServicosDto> servicos, Agendamentos agendamento) {
-//		List<Servico> lista = new ArrayList<>();
-//		double total = 0;
-//
-//		if(servicos == null) {
-//			System.out.println("lista vazia");
-//		}
-//		else {
-//		for(InforServicosDto i : servicos) {
-//			Servico servico = ServicoService.findById(i.getNumeroServico());
-//			lista.add(servico);
-//			total += servico.getValor();
-//		}
-//		}
-//
-//		agendamento.setValorTotal(total);
-//		return lista;
-//	}
+		}
+
+	private Agendamentos criarAgendamento(AgendamentoRequest obj, JwtAuthenticationToken token){
+
+		Empresa empresa = empresaService.autenticarToken(token);
+		Clientes cliente = clienteService.findByid(obj.cliente(),token);
+		Animais animal =  animaisService.findById(obj.animal(),token);
+		List<ValoresPorServico> servicos = instaciarListaServico(obj.servicos(),token);
+		Double valor = instaciarValor(servicos);
+		director.setStage(new StageAgendado());
+
+		 return director.saveCurrentStateAgendado(obj,cliente,animal,servicos,empresa,valor);
 
 
-	public void delete(Long id) {
+	}
+
+
+	@Transactional
+	public void transitarParaEstagio(Long id, String nextStage, AgendamentoRequest request,JwtAuthenticationToken token) {
+
+		Empresa empresa = empresaService.autenticarToken(token);
+		Agendamentos agendamento = repository.findByEmpresaAssociadaIdAndId(empresa.getId(),id);
+		director.setStage(getStageFromName(nextStage));
+		director.setBuilder(new AgendamentoBuilder().fromExisting(agendamento));
+		Double valor = 0.00;
+
+		switch (nextStage) {
+			case "SegundoEstagio":
+				 List<ValoresPorServico> servicos = instaciarListaServicoExistente(agendamento.getServicos(),request.servicos(),token);
+				 valor = instaciarValorExistente(agendamento.getValorTotal(),servicos,agendamento.getHorarioEntrada(),request.horarioEntradaRealizada());
+				 director.saveCurrentStateEmAndamento(request,servicos,valor);
+				break;
+
+			case "TerceiroEstagio":
+				 valor = agendamento.getValorTotal() + TaxaDeAtraso.calcularTaxaDeAtrasoSaida(agendamento.getHorarioSaida().toLocalTime(),request.horarioSaidaRealizada().toLocalTime());
+				 director.saveCurrentStateFinalizado(request,valor);
+				break;
+			case "QuartoEstagio":
+				 valor += agendamento.getValorTotal();
+				 director.saveCurrentStateCancelado(request,valor);
+				break;
+			default:
+				throw new CustomIllegalArgumentException("Estágio desconhecido: " + nextStage);
+		}
+
+
+		 repository.save(agendamento);
+	}
+
+	private Double instaciarValor(List<ValoresPorServico> servicos) {
+		Double valorTotal = 0.00;
+		for(ValoresPorServico i : servicos){
+			valorTotal += i.getValor();
+		}
+		return  valorTotal;
+	}
+
+	private Double instaciarValorExistente(Double valor,List<ValoresPorServico> servicos, LocalDateTime entrada,LocalDateTime entradaRealizada) {
+		Double valorTotal = 0.00;
+		for(ValoresPorServico i : servicos){
+			valorTotal += i.getValor();
+		}
+		Double taxa = TaxaDeAtraso.calcularTaxaDeAtrasoEntrada(entrada.toLocalTime(),entradaRealizada.toLocalTime());
+
+		return valor + valorTotal + taxa;
+	}
+
+
+	private AgendamentoStage getStageFromName(String stageName) {
+		switch (stageName) {
+			case "SegundoEstagio":
+				return new StageEmAndamento();
+			case "TerceiroEstagio":
+				return new StageFinalizado();
+			case "QuartoEstagio":
+				return new StageCancelado();
+			default:
+				throw new CustomIllegalArgumentException("Estágio desconhecido: " + stageName);
+		}
+	}
+
+
+	private List<ValoresPorServico> instaciarListaServico(List<Long> servicos,JwtAuthenticationToken token) {
+		List<ValoresPorServico> listaServicos = new ArrayList<>();
+		if(servicos.equals(null)){
+			throw new CustomIllegalArgumentException("lista esta vazia");
+		}
+		for(Long id : servicos){
+			listaServicos.add(valoresService.findById(id,token));
+		}
+		return listaServicos;
+	}
+
+	private List<ValoresPorServico> instaciarListaServicoExistente(List<ValoresPorServico> servicosExistente,List<Long> servicos,JwtAuthenticationToken token) {
+
+		List<ValoresPorServico> listaServicos = new ArrayList<>();
+		if(servicos == null){
+			return listaServicos;
+		}
+		else{
+			for(Long id : servicos){
+				ValoresPorServico servico = valoresService.findById(id,token);
+				if(servicosExistente.equals(servico)){
+					throw new CustomIllegalArgumentException("Não é possivel colocar um serviço já adicionado");
+				}
+				listaServicos.add(servico);
+			}
+			return listaServicos;
+		}
+	}
+
+
+	public void delete(Long id,JwtAuthenticationToken token) {
 		try {
-			repository.deleteById(id);
+			Empresa empresa = empresaService.autenticarToken(token);
+			Agendamentos agendamento = repository.findByEmpresaAssociadaIdAndId(empresa.getId(),id);
+			if(agendamento.getStatus().equals(StatusAgendamento.CANCELADO)){
+				repository.deleteById(agendamento.getId());
+			}
+			else{
+				throw new CustomDeleteporStageError("Precisa coloca-lo em estagio cancelado para deleta-lo");
+			}
+
 		}		
 		catch(EmptyResultDataAccessException e) {
 			throw new ResourceNotFoundException(id);
@@ -135,24 +269,11 @@ public class AgendamentosService {
 		catch(DataIntegrityViolationException e) {
 			throw new DataBaseException(e.getMessage());
 		}
-		
-	}
-	
-	public Agendamentos update(Long id, Agendamentos obj) {
-		try {
-			Agendamentos agendamento = repository.getReferenceById(id);
-			updateData(agendamento,obj);
-			return repository.save(agendamento);
-		}
-		catch (EntityNotFoundException e) {
-			throw new ResourceNotFoundException(id);
-		}
 	}
 
-	private void updateData(Agendamentos agendamento, Agendamentos obj) {
-		agendamento.setDate(obj.getDate());
-		agendamento.setServicos(obj.getServicos());
-		
+
+	public Agendamentos verificarAgendamentoAssociado(Agendamentos agendamento, Empresa empresa) {
+		return empresaService.verificarAssociacaoComEmpresa(agendamento, empresa, Agendamentos::getEmpresaAssociada);
 	}
 
 	}

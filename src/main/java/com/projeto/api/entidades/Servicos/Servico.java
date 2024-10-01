@@ -33,7 +33,4 @@ public class Servico implements Serializable{
 	@JoinColumn(name = "empresa_id")
 	private Empresa empresaAssociada;
 
-	@JsonIgnore
-	@ManyToMany(mappedBy = "servicos")
-	private List<Agendamentos> agendamento;
 }

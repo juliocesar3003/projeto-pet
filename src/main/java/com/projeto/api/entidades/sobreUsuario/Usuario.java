@@ -1,6 +1,6 @@
 package com.projeto.api.entidades.sobreUsuario;
 
-import com.projeto.api.DTO.Requests.LoginRequest;
+import com.projeto.api.DTO.Request.LoginRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

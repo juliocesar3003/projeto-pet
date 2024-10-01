@@ -1,7 +1,7 @@
 package com.projeto.api.service;
 import java.util.ArrayList;
 import java.util.List;
-import com.projeto.api.DTO.Requests.Reponses.ClienteResponse;
+import com.projeto.api.DTO.Reponses.ClienteResponse;
 import com.projeto.api.entidades.entidadesAnimais.Cachorro;
 import com.projeto.api.entidades.sobreUsuario.Empresa;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +55,7 @@ public class ClientesService {
 
 	}
 
-	public ClienteResponse findByid(Long id,JwtAuthenticationToken token) {
+	public ClienteResponse findByidResponse(Long id,JwtAuthenticationToken token) {
 
 		Empresa empresa = empresaService.autenticarToken(token);
 
@@ -65,7 +65,19 @@ public class ClientesService {
 			return converterClienteEmDto(cliente);
 
 	}
-	
+
+	public Clientes findByid(Long id,JwtAuthenticationToken token) {
+
+		Empresa empresa = empresaService.autenticarToken(token);
+
+		Clientes cliente = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException(id));
+
+		cliente = verificarClienteAssociado(cliente,empresa);
+		return cliente;
+
+	}
+
+
 	public Clientes insert(Clientes obj, JwtAuthenticationToken token) {
 
 		 Empresa empresa = empresaService.autenticarToken(token);

@@ -1,18 +1,16 @@
 package com.projeto.api.resource;
 
+import com.projeto.api.DTO.Reponses.AgendamentoResponse;
+import com.projeto.api.DTO.Request.AgendamentoRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+import org.springframework.web.bind.annotation.*;
 
 import com.projeto.api.entidades.sobreAgendamento.Agendamentos;
 import com.projeto.api.service.AgendamentosService;
+
+import java.util.List;
 
 @CrossOrigin(origins = "http://127.0.0.1:5500")
 @RestController
@@ -23,36 +21,40 @@ public class AgendamentosResource {
 	private AgendamentosService service;
 
 	
-//	@GetMapping
-//	public List<ExibirAgendamentoDTO> findAll(){
-//	List <ExibirAgendamentoDTO> lista = service.findAll();
-//	return lista;
-//	}
-//
-//	@GetMapping(value = "/{id}")
-//	public ExibirAgendamentoDTO findById(@PathVariable Long id){
-//		ExibirAgendamentoDTO obj = service.findById(id);
-//
-//		return obj;
-//	}
-//	@PostMapping
-//	@ResponseStatus(HttpStatus.CREATED)
-//	public Agendamentos insert(@RequestBody AgendamentosDTO objDto){
-//		Agendamentos agendamento = service.insert(objDto);
-//		 return agendamento;
-//
-//	}
-	@DeleteMapping(value = "/{id}")
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void delete(@PathVariable Long id){
-		service.delete(id);
+	@GetMapping
+	public List<AgendamentoResponse> findAll(JwtAuthenticationToken token){
+	 return service.findAllResponse(token);
+
 	}
 
-	@PutMapping(value =  "/{id}")
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-		public Agendamentos update(@PathVariable Long id, @RequestBody Agendamentos obj){
-		return obj = service.update(id, obj);
-		
+	@GetMapping(value = "/{id}")
+	public AgendamentoResponse findById(@PathVariable Long id,JwtAuthenticationToken token){
+		 return service.findByIdResponse(id, token);
+
+
 	}
+	@PostMapping("/iniciar")
+	@ResponseStatus(HttpStatus.CREATED)
+	public void insertAgendamento(@RequestBody AgendamentoRequest request, JwtAuthenticationToken token){
+		service.iniciarAgendamento(request,token);
+
+	}
+	@PostMapping("/transitar/{id}/{nextStage}")
+	@ResponseStatus(HttpStatus.CREATED)
+	public void TransitarAgendamento(@PathVariable Long id,
+					   @PathVariable String nextStage,
+					   @RequestBody AgendamentoRequest request,
+					   JwtAuthenticationToken token){
+		 service.transitarParaEstagio(id,nextStage,request,token);
+
+	}
+
+	@DeleteMapping(value = "/{id}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void delete(@PathVariable Long id,JwtAuthenticationToken token){
+		service.delete(id,token);
+	}
+
+
 	
 	}

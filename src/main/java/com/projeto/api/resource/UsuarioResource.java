@@ -4,7 +4,7 @@ import com.projeto.api.entidades.sobreUsuario.Roles;
 import com.projeto.api.entidades.sobreUsuario.Usuario;
 import com.projeto.api.repository.RolesRepository;
 import com.projeto.api.repository.UsuarioRepository;
-import com.projeto.api.resource.dto.CriarUsuarioDto;
+import com.projeto.api.DTO.Request.UsuarioRequest;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,7 +31,7 @@ public class UsuarioResource {
 
     @Transactional
     @PostMapping("/usuarios")
-    public ResponseEntity<Void> novoUsuario(@RequestBody CriarUsuarioDto dto){
+    public ResponseEntity<Void> novoUsuario(@RequestBody UsuarioRequest dto){
 
         var basicRole = rolesRepository.findByNome(Roles.Values.BASIC.name());
 

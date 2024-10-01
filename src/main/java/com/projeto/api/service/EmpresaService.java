@@ -1,6 +1,6 @@
 package com.projeto.api.service;
 
-import com.projeto.api.DTO.Requests.EmpresaRequest;
+import com.projeto.api.DTO.Request.EmpresaRequest;
 import com.projeto.api.entidades.sobreUsuario.Empresa;
 import com.projeto.api.entidades.sobreUsuario.Usuario;
 import com.projeto.api.infra.exception.exceptions.CustomACessDeniedException;

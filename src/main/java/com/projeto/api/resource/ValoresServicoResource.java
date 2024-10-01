@@ -1,9 +1,7 @@
 package com.projeto.api.resource;
 
-import com.projeto.api.DTO.Requests.Reponses.ServicoResponse;
-import com.projeto.api.DTO.Requests.Reponses.ValoresResponse;
-import com.projeto.api.DTO.Requests.ValoresServicoRequest;
-import com.projeto.api.entidades.Servicos.Servico;
+import com.projeto.api.DTO.Reponses.ValoresResponse;
+import com.projeto.api.DTO.Request.ValoresServicoRequest;
 import com.projeto.api.entidades.Servicos.ValoresPorServico;
 import com.projeto.api.service.ValoresService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,14 +19,14 @@ public class ValoresServicoResource {
     private ValoresService service;
 
     @GetMapping
-    private List<ValoresResponse> findAll(JwtAuthenticationToken token){
-        List<ValoresResponse> lista = service.findAll(token);
+    private List<ValoresResponse> findAllResponse(JwtAuthenticationToken token){
+        List<ValoresResponse> lista = service.findAllResponse(token);
         return lista;
     }
 
     @GetMapping(value ="/{id}")
-    public ValoresResponse findById(@PathVariable Long id, JwtAuthenticationToken token){
-        ValoresResponse obj = service.findById(id,token);
+    public ValoresResponse findByIdResponse(@PathVariable Long id, JwtAuthenticationToken token){
+        ValoresResponse obj = service.findByIdResponse(id,token);
         return obj;
     }
 

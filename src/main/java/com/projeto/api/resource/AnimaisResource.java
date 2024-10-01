@@ -2,8 +2,8 @@ package com.projeto.api.resource;
 
 import java.util.List;
 
-import com.projeto.api.DTO.Requests.Reponses.ResponseAnimais;
-import com.projeto.api.DTO.Requests.AnimalRequest;
+import com.projeto.api.DTO.Reponses.ResponseAnimais;
+import com.projeto.api.DTO.Request.AnimalRequest;
 import com.projeto.api.service.AnimaisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,7 +38,7 @@ public class AnimaisResource {
 	
 	@GetMapping(value = "/{id}")
 	public ResponseAnimais findById(@PathVariable Long id, JwtAuthenticationToken token){
-		ResponseAnimais obj = service.findById(id,token);
+		ResponseAnimais obj = service.findByIdResponse(id,token);
 		return obj;
 	}
 	@GetMapping(value = "/buscarNomes/{nome}")

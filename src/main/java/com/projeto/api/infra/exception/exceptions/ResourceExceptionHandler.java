@@ -7,8 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import com.projeto.api.resource.exception.StandardError;
-
 import jakarta.servlet.http.HttpServletRequest;
 
 @ControllerAdvice()
@@ -36,6 +34,10 @@ public ResponseEntity<StandardError> DataBaseException(DataBaseException e, Http
 	@ExceptionHandler(CustomACessDeniedException.class)
 	private ResponseEntity<String> handleCustomACessDeniedException(CustomACessDeniedException exception){
 		return  ResponseEntity.status(HttpStatus.FORBIDDEN).body(exception.getMessage());
+	}
+	@ExceptionHandler(CustomDeleteporStageError.class)
+	private ResponseEntity<String> handleCustomACessDeniedException(CustomDeleteporStageError exception){
+		return  ResponseEntity.status(HttpStatus.CONFLICT).body(exception.getMessage());
 	}
 	}
 	

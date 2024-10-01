@@ -1,8 +1,8 @@
 package com.projeto.api.resource;
 
 import com.projeto.api.repository.UsuarioRepository;
-import com.projeto.api.DTO.Requests.LoginRequest;
-import com.projeto.api.DTO.Requests.Reponses.LoginResponse;
+import com.projeto.api.DTO.Request.LoginRequest;
+import com.projeto.api.DTO.Reponses.LoginResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;

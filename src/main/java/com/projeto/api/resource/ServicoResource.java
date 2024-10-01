@@ -2,7 +2,7 @@ package com.projeto.api.resource;
 
 import java.util.List;
 
-import com.projeto.api.DTO.Requests.Reponses.ServicoResponse;
+import com.projeto.api.DTO.Reponses.ServicoResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;

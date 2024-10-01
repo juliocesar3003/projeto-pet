@@ -2,7 +2,7 @@ package com.projeto.api.resource;
 
 import java.util.List;
 
-import com.projeto.api.DTO.Requests.Reponses.ClienteResponse;
+import com.projeto.api.DTO.Reponses.ClienteResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +28,7 @@ public class ClienteResource {
 	
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<ClienteResponse> findbyId(@PathVariable Long id, JwtAuthenticationToken token){
-		ClienteResponse obj = service.findByid(id,token);
+		ClienteResponse obj = service.findByidResponse(id,token);
 		return ResponseEntity.ok().body(obj);
 	}
  

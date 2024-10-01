@@ -1,7 +1,9 @@
 package com.projeto.api.entidades.Servicos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.projeto.api.entidades.entidadesAnimais.ProprieadesAnimaisEnum.Pelagem;
 import com.projeto.api.entidades.entidadesAnimais.ProprieadesAnimaisEnum.Porte;
+import com.projeto.api.entidades.sobreAgendamento.Agendamentos;
 import com.projeto.api.entidades.sobreUsuario.Empresa;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.List;
 
 
 @Entity
@@ -35,7 +38,13 @@ public class ValoresPorServico implements Serializable {
 
     private Double valor;
 
+    @JsonIgnore
+    @ManyToMany(mappedBy = "servicos")
+    private List<Agendamentos> agendamento;
+
     @ManyToOne
     @JoinColumn(name = "empresa_id")
     private Empresa empresaAssociada;
+
+
 }

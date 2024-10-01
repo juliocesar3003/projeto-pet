@@ -2,14 +2,11 @@ package com.projeto.api.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-import com.projeto.api.DTO.Requests.Reponses.ServicoResponse;
+import com.projeto.api.DTO.Reponses.ServicoResponse;
 import com.projeto.api.entidades.sobreUsuario.Empresa;
-import com.projeto.api.repository.EmpresaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.lang.NonNull;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
@@ -18,8 +15,6 @@ import com.projeto.api.entidades.Servicos.Servico;
 import com.projeto.api.repository.ServicoRepository;
 import com.projeto.api.infra.exception.exceptions.DataBaseException;
 import com.projeto.api.infra.exception.exceptions.ResourceNotFoundException;
-
-import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class ServicoService {
@@ -137,7 +132,6 @@ public class ServicoService {
 
 	private ServicoResponse trasformeResponse(Servico i) {
 		ServicoResponse response = new ServicoResponse(i.getNome());
-
 		return response;
 	}
 

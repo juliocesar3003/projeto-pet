@@ -1,4 +1,4 @@
-package com.projeto.api.resource.exception;
+package com.projeto.api.infra.exception.exceptions;
 
 import java.io.Serializable;
 import java.time.Instant;

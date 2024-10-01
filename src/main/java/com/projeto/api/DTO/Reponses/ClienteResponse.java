@@ -1,4 +1,4 @@
-package com.projeto.api.DTO.Requests.Reponses;
+package com.projeto.api.DTO.Reponses;
 
 import com.projeto.api.entidades.sobreAgendamento.Agendamentos;
 import com.projeto.api.entidades.entidadesAnimais.Cachorro;

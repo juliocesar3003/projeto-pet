@@ -7,22 +7,15 @@ import java.util.List;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import com.projeto.api.entidades.Clientes;
-import com.projeto.api.entidades.Servicos.Servico;
+import com.projeto.api.entidades.Servicos.ValoresPorServico;
 import com.projeto.api.entidades.entidadesAnimais.Animais;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import com.projeto.api.entidades.sobreUsuario.Empresa;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Table(name = "tb_agendamentos")
@@ -35,8 +28,24 @@ private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-	private LocalDateTime date;
+
+	@DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss")
+	private LocalDateTime HorarioEntrada;
+
+	@DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss")
+	private LocalDateTime horarioEntradaRealizada;
+
+	@DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss")
+	private LocalDateTime horarioSaida;
+
+	@DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss")
+	private LocalDateTime horarioSaidaRealizada;
+
+	@Enumerated(EnumType.STRING)
+	private FormaDePagamento formaDePagamento;
+
+	@Enumerated(EnumType.STRING)
+	private StatusAgendamento status;
 
     @JsonIgnore
 	@ManyToOne
@@ -52,11 +61,15 @@ private static final long serialVersionUID = 1L;
 	@JoinTable(name = "tb_agendamento_servico",
 	joinColumns = @JoinColumn(name = "agendamento_id"),
 	inverseJoinColumns = @JoinColumn(name = "servico_id"))
-	private List<Servico> servicos = new ArrayList<>();
+	private List<ValoresPorServico> servicos = new ArrayList<>();
 	
 	private Double valorTotal;
+
+	@ManyToOne
+	@JoinColumn(name = "empresa_id")
+	private Empresa empresaAssociada;
 	
-    public void addServico(Servico servico) {
+    public void addServico(ValoresPorServico servico) {
         this.servicos.add(servico);
     }
 	

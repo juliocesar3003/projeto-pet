@@ -27,6 +27,7 @@ import lombok.NoArgsConstructor;
 @JsonSubTypes({
 		@JsonSubTypes.Type(value = Cachorro.class, name = "cachorro"),
 })
+@Table(name = "animais")
 public  abstract class Animais implements Serializable{
 private static final long serialVersionUID = 1L;
 

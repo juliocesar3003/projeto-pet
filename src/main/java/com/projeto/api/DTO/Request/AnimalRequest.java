@@ -1,4 +1,4 @@
-package com.projeto.api.DTO.Requests;
+package com.projeto.api.DTO.Request;
 
 import lombok.NonNull;
 

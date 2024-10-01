@@ -1,7 +1,7 @@
 package com.projeto.api.service;
 
-import com.projeto.api.DTO.Requests.AnimalRequest;
-import com.projeto.api.DTO.Requests.Reponses.ResponseAnimais;
+import com.projeto.api.DTO.Request.AnimalRequest;
+import com.projeto.api.DTO.Reponses.ResponseAnimais;
 import com.projeto.api.entidades.Clientes;
 import com.projeto.api.entidades.entidadesAnimais.Animais;
 import com.projeto.api.entidades.entidadesAnimais.Cachorro;
@@ -60,7 +60,7 @@ public class AnimaisService {
 		return repository.findByNome(nome);
 	}
 
-	public ResponseAnimais findById(Long id,JwtAuthenticationToken token) {
+	public ResponseAnimais findByIdResponse(Long id,JwtAuthenticationToken token) {
 
 		Empresa empresa = empresaService.autenticarToken(token);
 
@@ -78,6 +78,23 @@ public class AnimaisService {
 				return response = transformeInReponseGenerico(animal);
 			}
 		}
+
+	public Animais findById(Long id,JwtAuthenticationToken token) {
+
+		Empresa empresa = empresaService.autenticarToken(token);
+
+		Animais animal = repository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException(id));
+
+		animal = verificarServicoAssociado(animal,empresa);
+
+		if (animal instanceof Cachorro) {
+			return (Cachorro) animal;
+		}
+		else {
+			return animal;
+		}
+	}
 
 
 
@@ -160,7 +177,7 @@ public class AnimaisService {
 			return pet;
 	}
 
-	private ResponseAnimais transformeInReponse(Cachorro cachorro) {
+	public ResponseAnimais transformeInReponse(Cachorro cachorro) {
 		ResponseAnimais response = new ResponseAnimais(
 				cachorro.getId(),
 				"cachorro",
@@ -174,7 +191,7 @@ public class AnimaisService {
 		return response;
 	}
 
-	private ResponseAnimais transformeInReponseGenerico(Animais animal) {
+	public ResponseAnimais transformeInReponseGenerico(Animais animal) {
 		return new ResponseAnimais(
 				animal.getId(),
 				animal.getClass().getSimpleName().toLowerCase(),
