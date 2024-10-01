@@ -3,22 +3,14 @@ package com.projeto.api.entidades;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import com.projeto.api.entidades.sobreAgendamento.Agendamentos;
+import com.projeto.api.entidades.entidadesAnimais.Cachorro;
+import com.projeto.api.entidades.sobreUsuario.Empresa;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name ="tb_clientes")
@@ -37,9 +29,13 @@ private static final long serialVersionUID = 1L;
 	 private Long celular;
 	
 	 private String endereco;
+
+	 @ManyToOne
+	 @JoinColumn(name = "empresa_id")
+	 private Empresa empresaAssociada;
 	 
 	@OneToMany(mappedBy = "cliente")
-	private List<Animais> pet = new ArrayList<>();
+	private List<Cachorro> pet = new ArrayList<>();
 	
 
 	@OneToMany(mappedBy = "cliente")

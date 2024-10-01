@@ -8,4 +8,5 @@ import com.projeto.api.entidades.Clientes;
 
 public interface ClienteRepository extends JpaRepository<Clientes, Long>{
 	Clientes findByCelular(Long celular);
+	List<Clientes> findByEmpresaAssociadaId(Long empresaId);
 }
